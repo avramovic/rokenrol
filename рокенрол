@@ -12,12 +12,12 @@ if (empty($file)) {
     echo sprintf('Рокенрол %s'.PHP_EOL, VERZIJA);
     echo sprintf('Први српски православни програмски језик'.PHP_EOL);
     echo PHP_EOL;
-    echo sprintf('Коришћење: %s име-датотеке.рнр [аргумент1 [аргумент2]]'.PHP_EOL, $self);
+    echo sprintf('Коришћење: %s скрипта.рнр [параметар1 [параметар2 [...]]]'.PHP_EOL, $self);
     exit(0);
 }
 
 if (!is_file($file)) {
-    echo sprintf('Погубна грешка: Датотека %s није пронађена!'.PHP_EOL, $file);
+    echo sprintf('Погубна грешка: Скрипта %s није пронађена!'.PHP_EOL, $file);
     exit(1);
 }
 
@@ -26,7 +26,7 @@ $runner = new \Avram\Rokenrol\CodeRunner();
 
 $php = $parse->translate(file_get_contents($file));
 
-$runner->assign('датотека', $file);
-$runner->assign('аргументи', $argv);
+$runner->assign('скрипта', $file);
+$runner->assign('параметри', $argv);
 $runner->run($php);
 exit(0);
