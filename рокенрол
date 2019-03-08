@@ -1,12 +1,32 @@
 #!/usr/bin/env php
 <?php
+define('VERZIJA', '0.1');
 
 require "vendor/autoload.php";
+require "src/rokenrol.php";
+
+$self = array_shift($argv);
+$file = array_shift($argv);
+
+if (empty($file)) {
+    echo sprintf('Рокенрол %s'.PHP_EOL, VERZIJA);
+    echo sprintf('Први српски православни програмски језик'.PHP_EOL);
+    echo PHP_EOL;
+    echo sprintf('Коришћење: %s име-датотеке.рнр [аргумент1 [аргумент2]]'.PHP_EOL, $self);
+    exit(0);
+}
+
+if (!is_file($file)) {
+    echo sprintf('Погубна грешка: Датотека %s није пронађена!'.PHP_EOL, $file);
+    exit(1);
+}
 
 $parse = new \Avram\Rokenrol\CodeParser();
-
-$php = $parse->translate(file_get_contents($argv[1]));
-
 $runner = new \Avram\Rokenrol\CodeRunner();
-//var_dump($php);
+
+$php = $parse->translate(file_get_contents($file));
+
+$runner->assign('датотека', $file);
+$runner->assign('аргументи', $argv);
 $runner->run($php);
+exit(0);
