@@ -99,7 +99,7 @@ class CodeParser
         'ново\s*'           => 'new ',
         'нова\s*'           => 'new ',
         'нов\s*'            => 'new ',
-        '\s+као\s+€'         => ' as $',
+        '\s+као\s+€'        => ' as $',
         'баци\s*'           => 'throw ',
         'наслеђује\s*'      => 'extends ',
         'прекини\s*(\d?)'   => 'break %s',
@@ -107,8 +107,6 @@ class CodeParser
         '€([а-яА-Яцуи_]+)'  => '$%s',
         '$([а-яА-Яцуи_]+)'  => '$%s',
         '->([а-яА-Яцуи_]+)' => '->%s',
-        '”'                 => '"',
-        '’'                 => "'",
         'НОВИРЕД'           => 'PHP_EOL',
     ];
 
@@ -130,21 +128,23 @@ class CodeParser
                     continue;
                 }
 
-                $toReplace = array_shift($matches);
-//                var_dump($matches);
-                if ($lat !== null) {
-                    $replaceWith = (sprintf($lat, ...$matches));
-                } else {
-                    $replaceWith = $toReplace;
-                }
-                $php = str_replace($toReplace, $replaceWith, $php);
-
-
+                $toReplace   = array_shift($matches);
+                $replaceWith = sprintf($lat, ...$matches);
+                $php         = $this->str_replace($toReplace, $replaceWith, $php);
             }
 
         }
 
-        return ($php);
+        return $php;
+    }
+
+    function str_replace($replace, $with, $string)
+    {
+        $result  = "";
+        $outside = preg_split('/("[^"]*"|\'[^\']*\')/', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+        while ($outside)
+            $result .= str_replace($replace, $with, array_shift($outside)).array_shift($outside);
+        return $result;
     }
 
 
