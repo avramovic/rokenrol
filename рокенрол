@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+
+require "vendor/autoload.php";
+
+$parse = new \Avram\Rokenrol\CodeParser();
+
+$php = $parse->translate(file_get_contents($argv[1]));
+
+$runner = new \Avram\Rokenrol\CodeRunner();
+//var_dump($php);
+$runner->run($php);
