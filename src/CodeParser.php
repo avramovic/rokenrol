@@ -2,73 +2,12 @@
 
 namespace Avram\Rokenrol;
 
-class CodeParser
+use Avram\Rokenrol\Interfaces\ICodeParserInterface;
+
+class CodeParser implements ICodeParserInterface
 {
-    protected $azbuka = array(
-        "а" => "a",
-        "б" => "b",
-        "в" => "v",
-        "г" => "g",
-        "д" => "d",
-        "ђ" => "đ",
-        "е" => "e",
-        "ж" => "ž",
-        "з" => "z",
-        "и" => "i",
-        "ј" => "j",
-        "к" => "k",
-        "л" => "l",
-        "љ" => "lj",
-        "м" => "m",
-        "н" => "n",
-        "њ" => "nj",
-        "о" => "o",
-        "п" => "p",
-        "р" => "r",
-        "с" => "s",
-        "т" => "t",
-        "ћ" => "ć",
-        "у" => "u",
-        "ф" => "f",
-        "х" => "h",
-        "ц" => "c",
-        "ч" => "č",
-        "џ" => "dž",
-        "ш" => "š",
-        "А" => "A",
-        "Б" => "B",
-        "В" => "V",
-        "Г" => "G",
-        "Д" => "D",
-        "Ђ" => "Đ",
-        "Е" => "E",
-        "Ж" => "Ž",
-        "З" => "Z",
-        "И" => "I",
-        "Ј" => "J",
-        "К" => "K",
-        "Л" => "L",
-        "Љ" => "LJ",
-        "М" => "M",
-        "Н" => "N",
-        "Њ" => "NJ",
-        "О" => "O",
-        "П" => "P",
-        "Р" => "R",
-        "С" => "S",
-        "Т" => "T",
-        "Ћ" => "Ć",
-        "У" => "U",
-        "Ф" => "F",
-        "Х" => "H",
-        "Ц" => "C",
-        "Ч" => "Č",
-        "Џ" => "DŽ",
-        "Ш" => "Š",
-    );
 
-
-    protected $keywords = [
+    protected array $keywords = [
         'за\s*\('           => 'for (',
         'засваки\s*\('      => 'foreach (',
         'докје\s*\('        => 'while (',
@@ -110,19 +49,12 @@ class CodeParser
         'НОВИРЕД'           => 'PHP_EOL',
     ];
 
-    public function translit($text)
-    {
-        return str_replace(array_keys($this->azbuka), array_values($this->azbuka), $text);
-    }
-
-
-    public function translate($code)
+    public function parse(string $code): string
     {
         $php = $code;
 
         foreach ($this->keywords as $cyr => $lat) {
             preg_match_all('/'.$cyr.'/six', $code, $globalMatches, PREG_SET_ORDER);
-//            var_dump($globalMatches);
             foreach ($globalMatches as $matches) {
                 if (empty($matches)) {
                     continue;
@@ -130,7 +62,7 @@ class CodeParser
 
                 $toReplace   = array_shift($matches);
                 $replaceWith = sprintf($lat, ...$matches);
-                $php         = $this->str_replace($toReplace, $replaceWith, $php);
+                $php         = $this->replaceOutsideQuotes($toReplace, $replaceWith, $php);
             }
 
         }
@@ -138,7 +70,7 @@ class CodeParser
         return $php;
     }
 
-    function str_replace($replace, $with, $string)
+    protected function replaceOutsideQuotes(string $replace, string $with, string $string): string
     {
         $result  = "";
         $outside = preg_split('/("[^"]*"|\'[^\']*\')/', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -146,6 +78,5 @@ class CodeParser
             $result .= str_replace($replace, $with, array_shift($outside)).array_shift($outside);
         return $result;
     }
-
 
 }

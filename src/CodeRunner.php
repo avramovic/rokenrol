@@ -2,15 +2,22 @@
 
 class CodeRunner
 {
-    protected $variables;
+    protected array $variables;
 
-    public function assign($var, $value)
+    public function __construct(protected CodeParser $parser)
     {
-        $this->variables[$var] = $value;
+        //
     }
 
-    public function run($php)
+    public function assign(string $var, mixed $value): static
     {
+        $this->variables[$var] = $value;
+        return $this;
+    }
+
+    public function run(string $code): void
+    {
+        $php = $this->parser->parse($code);
         extract($this->variables);
         eval($php);
     }

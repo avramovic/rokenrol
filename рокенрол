@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
-define('VERZIJA', '0.1');
+
+use Avram\Rokenrol\CodeParser;
+use Avram\Rokenrol\CodeRunner;
+
+const VERZIJA = '0.2';
 
 require "vendor/autoload.php";
 require "src/rokenrol.php";
@@ -21,12 +25,11 @@ if (!is_file($file)) {
     exit(1);
 }
 
-$parse = new \Avram\Rokenrol\CodeParser();
-$runner = new \Avram\Rokenrol\CodeRunner();
+$code   = file_get_contents($file);
+$runner = new CodeRunner(new CodeParser());
 
-$php = $parse->translate(file_get_contents($file));
+$runner->assign('скрипта', $file)
+    ->assign('параметри', $argv)
+    ->run($code);
 
-$runner->assign('скрипта', $file);
-$runner->assign('параметри', $argv);
-$runner->run($php);
 exit(0);

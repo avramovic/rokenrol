@@ -1,6 +1,6 @@
 {
     "name": "avram/rokenrol",
-    "description": "PHP cirilicom",
+    "description": "PHP ć'irilicom",
     "type": "project",
     "license": "MIT",
     "authors": [
@@ -9,7 +9,9 @@
             "email": "avramyu@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "php": "^8.0"
+    },
     "autoload": {
         "psr-4": {
             "Avram\\Rokenrol\\": "src/"
