@@ -1,10 +1,12 @@
 <?php namespace Avram\Rokenrol;
 
+use Avram\Rokenrol\Interfaces\ICodeParserInterface;
+
 class CodeRunner
 {
     protected array $variables;
 
-    public function __construct(protected CodeParser $parser)
+    public function __construct(protected ICodeParserInterface $parser)
     {
         //
     }
